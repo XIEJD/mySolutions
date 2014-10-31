@@ -1,5 +1,10 @@
 #include<stdio.h>
 
+/*
+	function prototype
+*/
+int fibonacci(int);
+
 int main(int argc, char *argv[]){
 	int n;	
 	printf("Please input a number to show the fibonacci sequence:");
