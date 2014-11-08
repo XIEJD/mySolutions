@@ -16,22 +16,34 @@ int main(){
 
 int minSubseq(int *a,int h,int t){
 	int left,right,mid,tmp,i,m = (h+t)/2;
-	if( t-h == 0 ) return a[h];
+	if( t-h == 0 ){
+		 return a[h];
+	}
 	if( t-h == 1 ){
-		if( a[h]<0 && a[t]<0 ) return a[h]+a[t];
-		else return a[h]<a[t]?a[h]:a[t];	
+		if( a[h]<0 && a[t]<0 ){
+			 return a[h]+a[t];
+		}else{
+			 return a[h]<a[t]?a[h]:a[t];	
+		}
 	}
 	left = minSubseq(a,h,m-1);
 	right = minSubseq(a,m+1,t);
 	for( tmp =  mid = a[m], i = m-1; i >= h; i-- ){
 		tmp += a[i];
-		if( tmp < mid ) mid = tmp;	
+		if( tmp < mid ){ 
+			mid = tmp;	
+		}
 	}
 	for( tmp = mid, i = m+1; i <= t; i++ ){
 		tmp += a[i];
-		if( tmp < mid ) mid = tmp;
+		if( tmp < mid ){
+			 mid = tmp;
+		}
 	}
-	if( left < right ) tmp = left;
-	else tmp = right;
+	if( left < right ){
+		 tmp = left;
+	}else{
+		 tmp = right;
+	}
 	return mid<tmp?mid:tmp;
 }
