@@ -127,7 +127,7 @@ void deleteRoot(BTNode *T){
 int getRoot(BTNode *T){
 	return T->value;
 }
-
+/*
 int main(){
 	int n[] = {10,9,8,7,6,5,4,3,2,1,0};	
 	BTNode *root = init(n);
@@ -137,4 +137,5 @@ int main(){
 	}
 	return 0;
 }
+*/
 
