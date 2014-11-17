@@ -7,10 +7,11 @@
 	function prototype
 */
 int minSubseq(int *,int ,int);
+int minSubseq_n(int *);
 
 int main(){
-	int a[] = {1,-2,3,4,5,-6,7,-9,8};
-	printf("%d\n",minSubseq(a,0,8));
+	int a[] = {1,-2,3,-4,-5,-6,7,-9,8};
+	printf("%d\n%d\n",minSubseq(a,0,8),minSubseq_n(a));
 	return 0;
 }
 
@@ -46,4 +47,16 @@ int minSubseq(int *a,int h,int t){
 		 tmp = right;
 	}
 	return mid<tmp?mid:tmp;
+}
+
+int minSubseq_n(int *a){
+	int min = 0,sum = 0;
+	for(int i = 0; i < 9; i++){
+		sum += a[i];
+		min = min < sum ? min : sum;
+		if(sum > 0){
+			sum = 0;
+		}
+	}
+	return min;
 }
