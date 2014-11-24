@@ -67,19 +67,25 @@ void insert_a(LBTNode *T, int l, int r){
 
 void delete_a(LBTNode *T, int l, int r){
 	if(T){
-		T->cover = 0;
 		if(l > T->mid){
 			delete_a(T->rchild,l,r);
-			insert_a(T,T->left,l-1);
+			if(T->cover > 0){
+				insert_a(T,T->left,l-1);
+			}
 		}else if(r <= T->mid){
 			delete_a(T->lchild,l,r);
-			insert_a(T,r+1,T->right);
-		}else if(l > T->left && r < T->right){
+			if(T->cover > 0){
+				insert_a(T,r+1,T->right);
+			}
+		}else{
 			delete_a(T->rchild,T->mid+1,r);
 			delete_a(T->lchild,l,T->mid);
-			insert_a(T,T->left,l-1);
-			insert_a(T,r+1,T->right);
+			if(T->cover > 0){
+				insert_a(T,T->left,l-1);
+				insert_a(T,r+1,T->right);
+			}
 		}
+		T->cover = 0;
 	}
 }
 
@@ -155,9 +161,9 @@ int main(){
 	int a[] = {20,1,1,1,2,2,2,2,4,5,6,7,7,7,8,9,10,10,11,20,21};
 	int s[a[0]];
 	LBTNode *root = LBTInit(a,s);
-	insert_a(root,1,s[0]);
+	insert_a(root,4,s[0]);
 	printf("%d\n",calLength(root));
-	delete_a(root,1,4);
+	delete_a(root,5,6);
 	printf("%d\n",calLength(root));
 	return 0;
 }
