@@ -22,6 +22,7 @@ SPTNode* find(SPTNode *, int);				//将匹配到的元素旋转到根
 SPTNode* join(SPTNode *, SPTNode *);			//将两个子伸展树合并成一颗伸展树
 void split(SPTNode *, int, SPTNode *, SPTNode *);	//以匹配到的元素为界，将其分为二颗子伸展树
 SPTNode* SPTInit(int *);				//以二叉查找树的方法初始化
+void scan(SPTNode *);					//先序遍历
 
 /*函数定义*/
 SPTNode* createNode(){
