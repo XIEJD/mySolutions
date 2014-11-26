@@ -163,7 +163,7 @@ int main(){
 	LBTNode *root = LBTInit(a,s);
 	insert_a(root,4,s[0]);
 	printf("%d\n",calLength(root));
-	delete_a(root,5,6);
+	delete_a(root,7,9);
 	printf("%d\n",calLength(root));
 	return 0;
 }
