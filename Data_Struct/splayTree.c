@@ -8,6 +8,7 @@
 /*数据结构*/
 typedef struct SPTNode{
 	int value;
+	int nc;	//为题目而加4.c,子孙节点数
 	struct SPTNode *lchild,*rchild,*father;
 }SPTNode;
 
@@ -17,7 +18,7 @@ void zig(SPTNode *);					//右旋
 void zag(SPTNode *);					//左旋
 void splay(SPTNode *);
 void insert(SPTNode *, int);
-SPTNode* delete(SPTNode *, int);
+SPTNode* delete(SPTNode *, int);			//返回删除节点后，合并的根节点
 SPTNode* find(SPTNode *, int);				//将匹配到的元素旋转到根
 SPTNode* join(SPTNode *, SPTNode *);			//将两个子伸展树合并成一颗伸展树
 void split(SPTNode *, int, SPTNode **, SPTNode **);	//以匹配到的元素为界，将其分为二颗子伸展树
@@ -30,9 +31,12 @@ SPTNode* createNode(){
 }
 
 void zig(SPTNode *T){
+	int fc,mc;
 	if(T){
 		if(T->rchild){
 			if(T->father->value > T->rchild->value){
+				mc = T->father->nc;
+				fc = T->father->nc - T->nc - 1 + T->rchild->nc + 1;
 				T->father->lchild = T->rchild;
 				T->rchild->father = T->father;
 				T->rchild = T->father;
@@ -45,21 +49,29 @@ void zig(SPTNode *T){
 				printf("这不是一颗查找树！");
 			}
 		}else{
+			mc = T->father->nc;
+			fc = T->father->nc - T->nc - 1;
+			T->father->nc = T->father->nc - T->nc - 1;
 			T->father->lchild = NULL;
 			T->rchild = T->father;
 			T->father = T->father->father;
 			if(T->father){
 				T->rchild->value < T->father->value ? (T->father->lchild = T) : (T->father->rchild = T);
 			}
-			T->rchild->father = T;
+			T->rchild->father = T;	
 		}
+		T->nc = mc;//变换节点后
+		T->rchild->nc = fc;
 	}
 }
 
 void zag(SPTNode *T){
+	int fc,mc;
 	if(T){
 		if(T->lchild){
 			if(T->father->value < T->lchild->value){
+				mc = T->father->nc;
+				fc = T->father->nc - T->nc - 1 + T->lchild->nc + 1;
 				T->father->rchild = T->lchild;
 				T->lchild->father = T->father;
 				T->lchild = T->father;
@@ -72,6 +84,8 @@ void zag(SPTNode *T){
 				printf("这不是一颗查找树！");
 			}
 		}else{
+			mc = T->father->nc;
+			fc = T->father->nc - T->nc - 1;
 			T->father->rchild = NULL;
 			T->lchild = T->father;
 			T->father = T->father->father;
@@ -80,6 +94,8 @@ void zag(SPTNode *T){
 			}
 			T->lchild->father = T;
 		}
+		T->nc = mc;
+		T->lchild->nc = fc;
 	}
 }
 
@@ -106,9 +122,14 @@ void insert(SPTNode *T, int n){
 	SPTNode *p = T,*tmp;
 	while(p){
 		if(p->value == n){
+			while(p->father){
+				p->father->nc--;
+				p = p->father;
+			}
 			break;
 		}else{
 			tmp = p->value > n ? p->lchild : p->rchild;
+			p->nc++;
 			if(!tmp){
 				tmp = createNode();
 				tmp->value = n;
@@ -139,6 +160,7 @@ SPTNode* join(SPTNode *a, SPTNode *b){
 	splay(s);
 	s->rchild = b;
 	b->father = s;
+	s->nc += b->nc + 1;
 	return s;
 }
 
@@ -168,12 +190,14 @@ void scan(SPTNode *T){
 }
 
 int main(){
-	int a[] = {10,6,2,4,5,3,8,3,5,9,7};
+	int a[] = {20,6,2,4,5,3,8,3,5,9,7,10,19,11,18,12,17,13,16,14,15};
 	SPTNode *root;
 	root = SPTInit(a);
 	scan(root);
-	printf("------------\n");
+	printf("-----%d-------\n",root->nc);
 	root = delete(root,4);
+	root = delete(root,14);
 	scan(root);
+	printf("-----%d-----\n",root->nc);
 	return 0;
 }
