@@ -104,7 +104,7 @@ void insert(BTNode *T,int v){
 	newnode->value = v;
 	newnode->father = father = findFather(T);
 	if(!father->lchild && !father->rchild){
-		 father->lchild = newnode;
+		father->lchild = newnode;
 	}else{
 		 father->rchild = newnode;
 	}

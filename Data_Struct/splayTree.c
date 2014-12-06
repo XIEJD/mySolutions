@@ -19,21 +19,26 @@ typedef struct SPTNode{
 
 /*函数原型*/
 SPTNode* createNode();
+ZJZ* createZJZNode();
 void zig(SPTNode *);					//右旋
 void zag(SPTNode *);					//左旋
 void splay(SPTNode *);
 void insert(SPTNode *, int);
 SPTNode* delete(SPTNode *, int);			//返回删除节点后，合并的根节点
 SPTNode* find(SPTNode *, int);				//将匹配到的元素旋转到根
-SPTNode *findk(SPTNode *,int);				//找到第K大的节点
+SPTNode* findk(SPTNode *,int);				//找到第K大的节点
 SPTNode* join(SPTNode *, SPTNode *);			//将两个子伸展树合并成一颗伸展树
 void split(SPTNode *, int, SPTNode **, SPTNode **);	//以匹配到的元素为界，将其分为二颗子伸展树
 SPTNode* SPTInit(int *);				//以二叉查找树的方法初始化
-void scanPre(SPTNode *);				//先序遍历
+void scanPre(SPTNode *);				//遍历
 
 /*函数定义*/
 SPTNode* createNode(){
 	return malloc(sizeof(SPTNode));
+}
+
+ZJZ* createZJZNode(){
+	return malloc(sizeof(ZJZ));
 }
 
 void zig(SPTNode *T){
@@ -41,8 +46,6 @@ void zig(SPTNode *T){
 	if(T){
 		if(T->rchild){		//当右子树存在的情况下
 			if(T->father->value > T->rchild->value){
-				T->rchild->info->add += T->info->add;	//##因为此节点即将分离，所以将ADD属性继承给它
-				T->rchild->info->turn = (T->rchild->info->turn + T->info->turn) % 2;	//##继承TURN属性
 				mc = T->father->nc;
 				fc = T->father->nc - T->nc - 1 + T->rchild->nc + 1;
 				T->father->lchild = T->rchild;
@@ -68,9 +71,6 @@ void zig(SPTNode *T){
 			}
 			T->rchild->father = T;	
 		}
-		T->info->add += T->rchild->info->add;
-		T->rchild->info->add -= T->info->add;
-		
 		T->nc = mc;//变换节点后
 		T->rchild->nc = fc;
 	}
@@ -152,6 +152,7 @@ SPTNode *findk(SPTNode *T,int k){
 
 void insert(SPTNode *T, int n){
 	SPTNode *p = T,*tmp;
+	ZJZ *zjz;
 	while(p){
 		if(p->value == n){		//插入值重复，将其父节点多加的NC值减掉
 			while(p->father){
@@ -164,6 +165,8 @@ void insert(SPTNode *T, int n){
 			p->nc++;		//在它插入的父路径上，nc值都要加1
 			if(!tmp){
 				tmp = createNode();
+				zjz = createZJZNode();		//##
+				tmp->info = zjz;		//##
 				tmp->value = n;
 				tmp->info->max = n;		//##初始化info域，以value为关键值生成伸展树
 				p->value > n ? (p->lchild = tmp) : (p->rchild = tmp);
