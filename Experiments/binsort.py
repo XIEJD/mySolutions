@@ -80,7 +80,7 @@ class bins :
             None
         '''
         for item in items :
-            del self.bins[self.maps[item]]
+            self.bins[self.maps[item]].remove(item)
             del self.maps[item]
 
     def move(self, items, howto=-1) :
@@ -95,8 +95,8 @@ class bins :
             None
         '''
         for item in items :
-            self.bins[self.maps[item]+howto] = self.bins[self.maps[item]]       # copy first
-            del self.bins[self.maps[item]]                                      # then delete
+            self.bins[self.maps[item]+howto].append(item)                       # copy first
+            self.bins[self.maps[item]].remove(item)                             # then delete
             self.maps[item] = self.maps[item] + howto                           # update maps information
 
     def isEmpty(self) :
