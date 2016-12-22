@@ -31,7 +31,7 @@ class Tools :
             fset - tuple list, feedback arc set
         '''
         st = time.time()
-        self.bins = dict([(l,dict()) for l in range(3-diG.__len__(), diG.__len__()-2)])  
+        self.bins = dict([(l,dict()) for l in range(3-len(diG), len(diG)-2)])  
         # nodes are not sinks or sources will store in this list according to the value of outdegree-indegree
         self.sinks = list()                                                 # nodes are sinks
         self.sources = list()                                               # nodes are sources
@@ -115,13 +115,12 @@ class Tools :
         while len(self.bins[self.maxidx]) <= 0 and self.maxidx > self.minidx:                           # update the value of maxidx
                 self.maxidx = self.maxidx - 1
 
-###
-data = pd.read_table('/Users/xjd/Desktop/experiments/datasets/wiki-Vote.txt')
-G = nx.from_pandas_dataframe(data, 'Source', 'Target',create_using=nx.DiGraph())            
-msG = max(nx.weakly_connected_component_subgraphs(G), key=len)                              # find max weakly connected component subgraph in G
-tools = Tools()
-fas = tools.fas(msG)                                                                        # find fas
-msG.remove_edges_from(fas)                                                      
-print(len(fas),'the feedback arc set length.')
-print('The final graph is DAG ? ',nx.is_directed_acyclic_graph(msG))                        # verify the graph is a DAG or not, after excluding the fas
-###
+if __name__ == '__main__' :
+    data = pd.read_table('/Users/xjd/Desktop/experiments/datasets/wiki-Vote.txt')
+    G = nx.from_pandas_dataframe(data, 'Source', 'Target',create_using=nx.DiGraph())            
+    msG = max(nx.weakly_connected_component_subgraphs(G), key=len)                              # find max weakly connected component subgraph in G
+    tools = Tools()
+    fas = tools.fas(msG)                                                                        # find fas
+    msG.remove_edges_from(fas)                                                      
+    print(len(fas),'the feedback arc set length.')
+    print('The final graph is DAG ? ',nx.is_directed_acyclic_graph(msG))                        # verify the graph is a DAG or not, after excluding the fas

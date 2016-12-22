@@ -25,17 +25,17 @@ class bins :
         end - the end index of bin 
     '''
 
-    def __init__(self, start, end, step) :
+    def __init__(self, tuples, start, end, step, idxfield=0) :
         self.start = start
         self.step = step
         self.end = end
+        self.maps = dict()
         self.bins = {index : list() for index in range(start, end, step)}
-        self.maps = None
+        self.__initSort(tuples, idxfield)
 
-    def initSort(self, tuples, idxfield=0) :
+    def __initSort(self, tuples, idxfield=0) :
         '''
-        Init the bins according to the given tuples, I don't want to init it in the __init__,
-        I want to sort the data just when I call it.
+        Oh no.
 
         Parameters:
             tuples - the data to be sorted which are tuples
@@ -45,9 +45,11 @@ class bins :
             None
         '''
         self.increSort(tuples,idxfield)
-        for (t1, t2) in incretuples :
+        for (t1, t2) in tuples :
             binid = (t1,t2)[idxfield]
             self.maps[(t1,t2)[abs(idxfield-1)]] = binid     # I don't like the abs(idxfield-1) to make 1 the 0 and make 0 the 1. Can anybody give an advice?
+        self.upper = self.maxidx()                          # the maximum index of bins which are not empty
+        self.lower = self.minidx()
 
 
     def increSort(self, incretuples, idxfield=0) :
@@ -65,8 +67,10 @@ class bins :
         for (t1,t2) in incretuples : 
             binid = (t1,t2)[idxfield]
             value = (t1,t2)[abs(idxfield-1)]
-            self.bins[binid].append(value)
-            self.maps[value] = binid
+            self.bins[binid].append(value)                  # put the value into bin
+            self.maps[value] = binid                        # record the bin's index the value stored
+        self.__boundary()                                   # update the maximum index and minimum index
+
 
     def remove(self, items) :
         '''
@@ -82,6 +86,7 @@ class bins :
         for item in items :
             self.bins[self.maps[item]].remove(item)
             del self.maps[item]
+        self.__boundary()                                                       # update the boundaries
 
     def move(self, items, howto=-1) :
         '''
@@ -98,16 +103,106 @@ class bins :
             self.bins[self.maps[item]+howto].append(item)                       # copy first
             self.bins[self.maps[item]].remove(item)                             # then delete
             self.maps[item] = self.maps[item] + howto                           # update maps information
+        self.__boundary()
 
-    def isEmpty(self) :
+    def empty(self) :
         return True if len(self.maps) == 0 else False
 
+    def maxidx(self) :
+        '''
+        Find the maximum index of bins
+
+        Parameters:
+            None
+
+        Return:
+            Maximum index, Integer
+        '''
+        return max(self.maps.values())
+
+    def maxid(self) :
+        '''
+        This function is the same as the maxidx() function, but the implementation is different
+
+        Parameters:
+            None
+
+        Return:
+            Maximum index, Integer
+        '''
+        return self.upper
+        
+    def minidx(self) :
+        '''
+        Find the minimum index of bins
+
+        Parameters:
+            None
+
+        Return:
+            Minimum index, Integer
+        '''
+        return min(self.maps.values())
+
+    def minid(self) :
+        '''
+        This function is the same as the minidx() function, but the implementation is different
+
+        Parameters:
+            None
+
+        Return:
+            Minimum index, Integer
+        '''
+        return self.lower
+
+    def __boundary(self) :
+        '''
+        Get the min and max index of bins which are not empty.
+        This function will search the bins not empty from start and end
+
+        Parameters:
+            None
+
+        Return:
+            None
+        '''
+        self.upper = self.end - self.step
+        self.lower = self.start
+        while len(self.bins[self.upper]) == 0 :                 
+            self.upper -= self.step
+        while len(self.bins[self.lower]) == 0 :         
+            self.lower += self.step
+
+    def result(self) :
+        '''
+        Output the result
+
+        Parameters:
+            None
+
+        Return:
+            sorted sequence, list
+        '''
+        self.seq = list()
+        for i in range(self.lower, self.upper+self.step, self.step) :
+            for j in range(0, len(self.bins[i]), 1) :
+                self.seq.append(self.bins[i][j])
+        return self.seq
 
 
-
-
-
-
-
-
-
+if __name__ == '__main__' :
+    buckets = bins([(1,5),(2,4),(3,3),(4,2),(5,1)], 1, 6, 1)
+    buckets.remove([5])
+    buckets.remove([1])
+    print(buckets.result())
+    print('max index:', buckets.maxid())
+    print('min index:', buckets.minid())
+    buckets.increSort([(5,8)])
+    print(buckets.result())
+    print('max index:', buckets.maxid())
+    print('min index:', buckets.minid())
+    buckets.move([8],-4)
+    print(buckets.result())
+    print('max index:', buckets.maxid())
+    print('min index:', buckets.minid())
