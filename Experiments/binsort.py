@@ -4,13 +4,13 @@
     Data structure and algorithms for sorting problem.
 
     Include:
-        bin sort
+        bin sort - TODO: refactor code, reduce the loops.
 
     Author:
         ExcitedX
 
     Date:
-        2016.12.21
+        2016.12.26
 '''
 
 class bins :
@@ -30,6 +30,8 @@ class bins :
         self.step = step
         self.end = end
         self.maps = dict()
+        self.sources = list()       #  the sources and sinks bin are not in the bins, they are the reserve bins at the head and tail
+        self.sinks = list()         #
         self.bins = {index : list() for index in range(start, end, step)}
         self.__initSort(tuples, idxfield)
 
@@ -100,13 +102,24 @@ class bins :
             None
         '''
         for item in items :
-            self.bins[self.maps[item]+howto].append(item)                       # copy first
-            self.bins[self.maps[item]].remove(item)                             # then delete
-            self.maps[item] = self.maps[item] + howto                           # update maps information
+            try :
+                index = self.maps[item]
+            except :
+                continue
+            if index+howto < self.start :
+                del self.maps[items]
+                self.sinks.append(item)                                         # out of the lower boundary, add the item to the sinks
+            elif index+howto > self.end :
+                del self.maps[item]
+                self.sources.append(item)
+            else :
+                self.bins[index+howto].append(item)                       # copy first
+                self.bins[index].remove(item)                             # then delete
+                self.maps[item] = self.maps[item] + howto                           # update maps information
         self.__boundary()
 
     def empty(self) :
-        return True if len(self.maps) == 0 else False
+        return True if len(self.maps)+len(self.sinks)+len(self.sources) == 0 else False
 
     def maxidx(self) :
         '''
@@ -169,9 +182,9 @@ class bins :
         '''
         self.upper = self.end - self.step
         self.lower = self.start
-        while len(self.bins[self.upper]) == 0 :                 
+        while len(self.bins[self.upper]) == 0 and self.upper > self.start :                 
             self.upper -= self.step
-        while len(self.bins[self.lower]) == 0 :         
+        while len(self.bins[self.lower]) == 0 and self.lower < self.end-self.step :         
             self.lower += self.step
 
     def result(self) :
@@ -189,6 +202,15 @@ class bins :
             for j in range(0, len(self.bins[i]), 1) :
                 self.seq.append(self.bins[i][j])
         return self.seq
+    
+    def maxPop(self) :
+        '''
+        pop one of the maximum bin's items
+        '''
+        node = self.bins[self.maxid()].pop()
+        del self.maps[node]
+        self.__boundary()
+        return node
 
 
 if __name__ == '__main__' :

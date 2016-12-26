@@ -1,6 +1,5 @@
 set nocompatible              " be iMproved, required
-filetype off                  " required
-
+filetype off                  " required 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -10,9 +9,12 @@ call vundle#begin()
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
-
+Plugin 'vim-airline/vim-airline-themes'
+"Plugin 'davidhalter/jedi-vim'
+Plugin 'vim-airline/vim-airline'
+Plugin 'scrooloose/nerdtree'
 Plugin 'tmhedberg/SimpylFold'
-Plugin 'Valloric/YouCompleteMe'
+Plugin 'Valloric/YouCompleteMe' "安装完后，到~/.vim/bundle/YouCompleteMe/目录下运行install.py文件，注意依赖
 Plugin 'nvie/vim-flake8'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'tomasr/molokai'
@@ -64,3 +66,14 @@ set grepprg=grep\ -nH\ $*
 let g:tex_flavor='latex'
 set iskeyword+=:
 autocmd BufEnter *.tex set sw=4
+
+"airline
+set laststatus=2
+let g:airline_theme='solarized'
+
+"NERDTree
+map <C-n> :NERDTreeToggle<CR> " binding Ctrl+n as nerdtree toggle key
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif "if only nerdtree window exist, then exit
+let g:NERDTreeDirArrowExpandable = '+'
+let g:NERDTreeDirArrowCollapsible = '-'
+
