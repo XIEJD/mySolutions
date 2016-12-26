@@ -19,5 +19,5 @@
 
 
 ---
-`欢迎Pull Request`
+`欢迎Pull Requests`
 `欢迎Open Issues`
