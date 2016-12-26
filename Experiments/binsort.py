@@ -131,20 +131,11 @@ class bins :
         Return:
             Maximum index, Integer
         '''
-        return max(self.maps.values())
+        try :
+            return max(self.maps.values())
+        except :
+            return None
 
-    def maxid(self) :
-        '''
-        This function is the same as the maxidx() function, but the implementation is different
-
-        Parameters:
-            None
-
-        Return:
-            Maximum index, Integer
-        '''
-        return self.upper
-        
     def minidx(self) :
         '''
         Find the minimum index of bins
@@ -155,19 +146,10 @@ class bins :
         Return:
             Minimum index, Integer
         '''
-        return min(self.maps.values())
-
-    def minid(self) :
-        '''
-        This function is the same as the minidx() function, but the implementation is different
-
-        Parameters:
-            None
-
-        Return:
-            Minimum index, Integer
-        '''
-        return self.lower
+        try :
+            return min(self.maps.values())
+        except :
+            return None
 
     def __boundary(self) :
         '''
@@ -180,12 +162,8 @@ class bins :
         Return:
             None
         '''
-        self.upper = self.end - self.step
-        self.lower = self.start
-        while len(self.bins[self.upper]) == 0 and self.upper > self.start :                 
-            self.upper -= self.step
-        while len(self.bins[self.lower]) == 0 and self.lower < self.end-self.step :         
-            self.lower += self.step
+        self.upper = self.maxidx()
+        self.lower = self.minidx()
 
     def result(self) :
         '''
@@ -207,7 +185,7 @@ class bins :
         '''
         pop one of the maximum bin's items
         '''
-        node = self.bins[self.maxid()].pop()
+        node = self.bins[self.maxidx()].pop()
         del self.maps[node]
         self.__boundary()
         return node
@@ -218,13 +196,13 @@ if __name__ == '__main__' :
     buckets.remove([5])
     buckets.remove([1])
     print(buckets.result())
-    print('max index:', buckets.maxid())
-    print('min index:', buckets.minid())
+    print('max index:', buckets.maxidx())
+    print('min index:', buckets.minidx())
     buckets.increSort([(5,8)])
     print(buckets.result())
-    print('max index:', buckets.maxid())
-    print('min index:', buckets.minid())
+    print('max index:', buckets.maxidx())
+    print('min index:', buckets.minidx())
     buckets.move([8],-4)
     print(buckets.result())
-    print('max index:', buckets.maxid())
-    print('min index:', buckets.minid())
+    print('max index:', buckets.maxidx())
+    print('min index:', buckets.minidx())
