@@ -4,7 +4,7 @@
     Data structure and algorithms for sorting problem.
 
     Include:
-        bin sort - TODO: refactor code, reduce the loops.
+        bin sort - For fas_r.py use only.
 
     Author:
         ExcitedX
@@ -29,6 +29,8 @@ class bins :
         self.start = start
         self.step = step
         self.end = end
+        self.lower = end
+        self.upper = start - step
         self.maps = dict()
         self.sources = list()       #  the sources and sinks bin are not in the bins, they are the reserve bins at the head and tail
         self.sinks = list()         #
@@ -49,9 +51,9 @@ class bins :
         self.increSort(tuples,idxfield)
         for (t1, t2) in tuples :
             binid = (t1,t2)[idxfield]
-            self.maps[(t1,t2)[abs(idxfield-1)]] = binid     # I don't like the abs(idxfield-1) to make 1 the 0 and make 0 the 1. Can anybody give an advice?
-        self.upper = self.maxidx()                          # the maximum index of bins which are not empty
-        self.lower = self.minidx()
+            self.maps[(t1,t2)[abs(idxfield-1)]] = binid             # I don't like the abs(idxfield-1) to make 1 the 0 and make 0 the 1. Can anybody give an advice?
+        self.__maxidx()                                             # the maximum index of bins which are not empty
+        self.__minidx()
 
 
     def increSort(self, incretuples, idxfield=0) :
@@ -71,57 +73,46 @@ class bins :
             value = (t1,t2)[abs(idxfield-1)]
             self.bins[binid].append(value)                  # put the value into bin
             self.maps[value] = binid                        # record the bin's index the value stored
-        self.__boundary()                                   # update the maximum index and minimum index
+            if self.lower > binid :                         # update the maximum index and minimum index
+                self.lower = binid
+            elif self.upper < binid :
+                self.upper = binid
 
-
-    def remove(self, items) :
-        '''
-        Remove items from bins.
-        the items is not tuples, it's a list, I know exactly the bins' id where items are
-
-        Parameters:
-            items - list consists of items to be removed
-
-        Return:
-            None
-        '''
-        for item in items :
-            self.bins[self.maps[item]].remove(item)
-            del self.maps[item]
-        self.__boundary()                                                       # update the boundaries
-
-    def move(self, items, howto=-1) :
+    def move(self, items) :
         '''
         Move the item from the nth bin to (n+howto)th bin
 
         Parameters:
             items - the item to be moved
-            howto - Number, if negtive , then the item is moved to smaller bins, vice-versa
 
         Return:
             None
         '''
+        howto = -1                                                                      # for the specified problem in referenced paper
         for item in items :
+            index = None
             try :
                 index = self.maps[item]
             except :
                 continue
-            if index+howto < self.start :
+            newindex = index + howto
+            if newindex < self.start :
                 del self.maps[items]
-                self.sinks.append(item)                                         # out of the lower boundary, add the item to the sinks
-            elif index+howto > self.end :
+                self.sinks.append(item)                                                 # out of the boundary, add the item to the sinks
+            elif newindex > self.end :
                 del self.maps[item]
                 self.sources.append(item)
             else :
-                self.bins[index+howto].append(item)                       # copy first
-                self.bins[index].remove(item)                             # then delete
-                self.maps[item] = self.maps[item] + howto                           # update maps information
-        self.__boundary()
+                self.bins[newindex].append(item)                                        # copy first
+                self.bins[index].remove(item)                                           # then delete
+                self.maps[item] = newindex                                              # update maps information
+        self.__minidx()
+        self.__maxidx()
 
     def empty(self) :
-        return True if len(self.maps)+len(self.sinks)+len(self.sources) == 0 else False
+        return True if len(self.maps) == 0 and len(self.sinks) == 0 and len(self.sources) == 0 else False
 
-    def maxidx(self) :
+    def __maxidx(self) :
         '''
         Find the maximum index of bins
 
@@ -131,12 +122,10 @@ class bins :
         Return:
             Maximum index, Integer
         '''
-        try :
-            return max(self.maps.values())
-        except :
-            return None
+        while len(self.bins[self.upper]) == 0 and self.upper > self.start:              # if the maximum bin is empty, find the maximum bin
+            self.upper -= 1
 
-    def minidx(self) :
+    def __minidx(self) :
         '''
         Find the minimum index of bins
 
@@ -146,24 +135,8 @@ class bins :
         Return:
             Minimum index, Integer
         '''
-        try :
-            return min(self.maps.values())
-        except :
-            return None
-
-    def __boundary(self) :
-        '''
-        Get the min and max index of bins which are not empty.
-        This function will search the bins not empty from start and end
-
-        Parameters:
-            None
-
-        Return:
-            None
-        '''
-        self.upper = self.maxidx()
-        self.lower = self.minidx()
+        while len(self.bins[self.lower]) == 0 and self.lower < self.end - self.step :   # if the minimum bin is empty, find the minimum bin
+            self.lower += 1
 
     def result(self) :
         '''
@@ -185,24 +158,12 @@ class bins :
         '''
         pop one of the maximum bin's items
         '''
-        node = self.bins[self.maxidx()].pop()
+        node = self.bins[self.upper].pop()
+        self.__maxidx()
         del self.maps[node]
-        self.__boundary()
         return node
 
 
 if __name__ == '__main__' :
     buckets = bins([(1,5),(2,4),(3,3),(4,2),(5,1)], 1, 6, 1)
-    buckets.remove([5])
-    buckets.remove([1])
-    print(buckets.result())
-    print('max index:', buckets.maxidx())
-    print('min index:', buckets.minidx())
-    buckets.increSort([(5,8)])
-    print(buckets.result())
-    print('max index:', buckets.maxidx())
-    print('min index:', buckets.minidx())
-    buckets.move([8],-4)
-    print(buckets.result())
-    print('max index:', buckets.maxidx())
-    print('min index:', buckets.minidx())
+    print('test me.')
