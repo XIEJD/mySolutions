@@ -17,7 +17,10 @@ from binsort import bins
 
 def fas(diG) :
     '''
-    balabalabala, I don't want to write the document.
+    The implementation of the referenced paper
+
+    References:
+        Eades P, Lin X, Smyth W F. A fast and effective heuristic for the feedback arc set problem[J]. Information Processing Letters, 1993, 47(6): 319-323.
 
     Parameters:
         diG - directed graph, networkx.DiGraph.
@@ -50,25 +53,27 @@ def fas(diG) :
     s1.extend(sources)
     s2.extend(sinks)
     while not buckets.empty() :
-        while len(buckets.sinks) > 0 :
+        while len(buckets.sinks) > 0 :          # the nodes out of the lower boundary will put into bins.sinks
             node = buckets.sinks.pop()
             innodes = diG.predecessors(node)
             buckets.move(innodes)
             s2.append(node)
-        while len(buckets.sources) > 0 :
-            node = buckets.sources.pop()
-            s1.append(node)                     # actually, the sources have no incident edges
-        node = buckets.maxPop()
-        innodes = diG.predecessors(node)
-        buckets.move(innodes)
-        s1.append(node)
-    s2.reverse()
+        #while len(buckets.sources) > 0 :       # the nodes out of the upper boundary will put into bins.sources, impossible in this case
+        #    print('fuck')                      
+        #    node = buckets.sources.pop()
+        #    s1.append(node) 
+        if not buckets.empty() :
+            node = buckets.maxPop()             # selecte a node from the maximum bin randomly
+            innodes = diG.predecessors(node)
+            buckets.move(innodes)
+            s1.append(node)
+    s2.reverse()                                
     s1.extend(s2)
     et_generate = time.time()
     print(et_generate-et_init, 'generate the sequence time length.')
     # find all leftward edges
     cmpidx = dict()                             # store the indexes of each node
-    fset = list()
+    fset = list()                               # the result set
     for index,node in enumerate(s1) :
         cmpidx[node] = index
     for node in s1 :
@@ -87,7 +92,7 @@ def fas(diG) :
         return fset
 
 if __name__ == '__main__' :
-    data = pd.read_table('/Users/xjd/Desktop/experiments/datasets/wiki-Vote.txt')
+    data = pd.read_table('/Users/xjd/Desktop/experiments/datasets/wiki-Talk.txt')
     G = nx.from_pandas_dataframe(data, 'Source', 'Target', create_using=nx.DiGraph())
     msG = max(nx.weakly_connected_component_subgraphs(G), key=len)
     fas = fas(msG)
