@@ -116,7 +116,7 @@ class Tools :
                 self.maxidx = self.maxidx - 1
 
 if __name__ == '__main__' : 
-    data = pd.read_table('/Users/xjd/Desktop/experiments/datasets/wiki-Vote.txt')
+    data = pd.read_table('/Users/xjd/Desktop/experiments/datasets/epinions.txt')
     G = nx.from_pandas_dataframe(data, 'Source', 'Target',create_using=nx.DiGraph())            
     msG = max(nx.weakly_connected_component_subgraphs(G), key=len)                              # find max weakly connected component subgraph in G
     tools = Tools()
