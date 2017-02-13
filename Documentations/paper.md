@@ -27,7 +27,7 @@
 > * 必须清理完所有边
 > * 最小化搜索时间(Search Time),实际意思为最小化策略长度
 
-* Example
+### Example
 ![example](./images/example.png)
  蓝色节点为有Searcher的节点， 蓝色边为当前轮清理的边，绿色边为之前清理的边，黑色边为污染边
 
