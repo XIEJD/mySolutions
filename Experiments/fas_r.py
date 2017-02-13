@@ -91,6 +91,17 @@ def fas(diG) :
     else :
         return fset
 
+def export2csv(edges) :
+    '''
+    Export the tuples list to static csv file.
+
+    Parameters:
+        edges - tuples list.
+
+    return:
+        url - a string represents the place that the csv file located. 
+    '''
+
 if __name__ == '__main__' :
     data = pd.read_table('/Users/xjd/Desktop/experiments/datasets/wiki-Talk.txt')
     G = nx.from_pandas_dataframe(data, 'Source', 'Target', create_using=nx.DiGraph())
