@@ -36,7 +36,7 @@ filetype plugin indent on    " required
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 
-
+set nowrap
 set nu
 set expandtab
 set tabstop=4
@@ -47,6 +47,7 @@ autocmd FileType tex setlocal spell spelllang=en_us,cjk
 
 " enable folding with the spacebar
 nnoremap <space> za
+nnoremap <c-r> zR
 let g:SimpylFold_docstring_preview=1
 
 let python_highlight_all=1
