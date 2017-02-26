@@ -63,10 +63,13 @@ else
 endif
 
 "vim-latex
+"suspend the imaps functionality, I really don't like the imaps here
+let g:Imap_FreezeImap=1
 set grepprg=grep\ -nH\ $*
 let g:tex_flavor='latex'
 set iskeyword+=:
 autocmd BufEnter *.tex set sw=4
+
 
 "airline
 set laststatus=2
@@ -75,6 +78,6 @@ let g:airline_theme='solarized'
 "NERDTree
 map <C-n> :NERDTreeToggle<CR> " binding Ctrl+n as nerdtree toggle key
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif "if only nerdtree window exist, then exit
-let g:NERDTreeDirArrowExpandable = '+'
-let g:NERDTreeDirArrowCollapsible = '-'
+let g:NERDTreeDirArrowExpandable='+'
+let g:NERDTreeDirArrowCollapsible='-'
 
