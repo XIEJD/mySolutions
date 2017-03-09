@@ -247,6 +247,27 @@
         * 第二个副本：放置在于第一个副本不同机架的节点上。
         * 第三个副本：放置在于第二个副本相同的机架上 (数据传的快)。
         * 更多副本：随机节点。
+    
+    * *Tuning Parameters in HDFS*
+
+        1. Replication
+            * Parameter: _dfs.replication_ (副本数量)
+            * Default: 3
+            * Tradeoffs: 减少副本能减少存储使用空间，减少副本放置的消耗，同时也意味着更差的鲁棒性。增加副本能让更多的 workers 拥有本地数据。
+        
+        2. Threads
+            * Parameter: _dfs.datanode.handler.count_ (每个 Datanode 上服务线程数量)
+            * Default: 10
+            * Tradeoffs: 可以根据机器核数来确定。
+
+        3. Number of Blocks for each File
+            * Parameter: _dfs.namenode.fs-limits.max-blocks-per-file_
+            * Default: 1048576
+            * Tradeoffs: Map 任务的数量取决于输入 block 的数量，block 数量越多，需要越多的 Map 任务，越多的 Map 任务会导致越多的系统 overhead。同时更多的 block 也会造成 namenode 中更多的内存消耗。
+
+        4. More can be find here: [dfs-default.xml](http://hadoop.apache.org/docs/r2.7.3/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml)
+
+    * *HDFS Commands* : HDFS 命令可以从 bin/hdfs 来执行，分为用户命令，管理员命令和调试命令。[More hdfs commands](http://hadoop.apache.org/docs/r2.7.3/hadoop-project-dist/hadoop-hdfs/HDFSCommands.html)
 
 2. YARN - Yet Another Resource Negotiator
 
@@ -271,6 +292,7 @@
         ![After ApplicationMaster Startup](images/after_applicationmaster_startup.png)
         
         _(图片来源: Pro Apache Hadoop)_
+
         
 3. MapReduce (计算框架)
 
