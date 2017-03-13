@@ -1,0 +1,462 @@
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script><link href="./solarized-light.css" rel="stylesheet"><h2>CSS Secrets Notes</h2>
+
+<blockquote>
+<p><em>What is CSS ?</em></p>
+
+<p>CSS 全称 Cascading Style Sheet</p>
+</blockquote>
+
+<h3>Introduction</h3>
+
+<ul>
+<li><p>Vendor prefixes were an epic failure.</p></li>
+<li><p>Minimize code duplication</p></li>
+<li><p>单位用em，随font-size动态变化。</p></li>
+<li><p>半透明效果用 hsla 方法</p></li>
+<li><p>响应式设计 (Responsive Web Design)</p></li>
+<li><p>减少 “media” 指令的使用：</p>
+
+<ol>
+<li>使用百分比宽度而不是固定宽度, 如果一定要固定宽度，尽量使用 vw, wh, vmax, vmin 这些 viewport-relative units。</li>
+<li>当你想让某个元素变大时，使用 max-width, 而不是 width。</li>
+<li>不要忘了给那些可置换元素设置max-width属性为100%。比如：img, object, video, iframe。</li>
+<li>当背景图需要覆盖整个容器时，用 background-size: cover。最好不要把大图小化当移动终端的背景，浪费流量。</li>
+<li>When laying out images (or other elements) in a grid of rows and columns, let the number of columns be dictated by the viewport width. Flexible Box Layout (a.k.a. Flexbox) or display: inline-block and regular text wrapping can help with that.</li>
+<li>当用多栏文本时，用 column-width 而不是 column-count，从而你在低分辨率的屏幕上能单栏显示。</li>
+</ol></li>
+<li><p>在考虑响应式之前，你应该更多的保证你的设计足够的 “liquid”, 即别设计得太死板，如果所有参数都钉死了，就是太 “solid” 了。</p></li>
+</ul>
+
+<h3>Backgrounds &amp; Borders</h3>
+
+<ol>
+<li><p>Translucent Borders</p>
+
+<blockquote>
+<p><strong>What is RGBA &amp; HSLA ?</strong></p>
+
+<p>RGBA 实际上是 RGB + A，其中RGB代表由红、绿、蓝组成的颜色空间，A代表不透明度。
+HSLA 实际上是 HSL + A，其中HSL是工业界的颜色标准，由H-色相，S-饱和度，L-明度组成，A代表不透明度。</p>
+</blockquote>
+
+<ul>
+<li><p><em>The Problem</em> : 当我们设置以下样式时，并不能得到半透明的边框。</p>
+
+<p>border: 10px solid hsla(0, 0%, 100%, 0.5);
+background: white;</p></li>
+<li><p><em>The Solution</em> : 得不到半透明的边框并不是上面的样式出问题了，而是背景并没有延伸到边框下来，浏览器背景默认渲染到 border edge, 而我们需要渲染到 padding edge, 所以以下样式会起作用。</p>
+
+<p><img src="images/css_jiemi/box_model.png" alt="Box Model"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>border: 10px solid hsla(0, 0%, 100%, 0.5);
+background: white;
+background-clip: padding-box;
+</code></pre></li>
+</ul></li>
+<li><p>Multiple Borders</p>
+
+<blockquote>
+<p><strong>How to use Box-Shadow ?</strong></p>
+
+<p><code>box-shadow: h-shadow, v-shadow, [blur, spread, color, inset]</code></p>
+
+<p>其中，带方括号的为可选参数，h-shadow 表示阴影水平平移, v-shadow 表示阴影垂直平移, blur 表示模糊半径, spread 表示阴影半径, color 表示阴影颜色, inset 表示阴影方向为内敛( outset 为向外发散，互斥)</p>
+</blockquote>
+
+<ul>
+<li><p><em>The Problem</em> : 当我们需要多重边框时，我们需要用多于的元素来嵌套实现，这种实现方式十分丑陋。</p></li>
+<li><p><em>The Solution</em> : </p>
+
+<ul>
+<li><p>使用 box-shadow 来解决:</p>
+
+<p><img src="images/css_jiemi/multi_border_box_shadow.png" alt="multi border box shadow"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>background: yellowgreen;
+box-shadow: 0 0 0 10px #655,
+            0 0 0 15px deeppink,
+            0 5px 10px 15px rgba(0,0,0,.6);
+</code></pre>
+
+<ul>
+<li>因为这个方法只是模拟边框的视觉效果，所以实际使用是它所占的空间并不会被真正的去计算，不能和真正的border等同，需要利用 padding 或者 margin 来调整大小以和全局协调。</li>
+</ul></li>
+<li><p>使用 outline 来解决: </p>
+
+<p><img src="images/css_jiemi/multi_border_box_shadow.png" alt="multi border outline"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>    background: yellowgreen;
+    border: 10px solid #655;
+    outline: 15px solid deeppink;
+    border-radius:10px
+</code></pre>
+
+<ul>
+<li>利用 outline 方法只能得到二重边框，无法得到多重边框，同时可以看到，border-radius 没有影响到 outline 的表达，这是一个bug。</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ol>
+
+<ul>
+<li><p>Flexsible Backgroud Position</p>
+
+<blockquote>
+<p>How to use background-position ?</p>
+
+<p><code>background-position: bottom right</code>, 这将会把背景放到容器右下角。</p>
+</blockquote>
+
+<ul>
+<li><p><em>The Problem</em> : 如何让背景图偏离边界一点？</p></li>
+<li><p><em>The Solution</em> :</p>
+
+<ul>
+<li><p>使用CSS3扩展的background-postion语法解决:</p>
+
+<pre><code>background: url(code-pirate.svg) no-repeat #58a;
+background-position: right 20px bottom 10px;
+</code></pre></li>
+<li><p>使用 background-origin 语法解决: 这种方法能省去每次调节 padding 大小的时候都要去调节 offset 的麻烦</p>
+
+<pre><code>padding: 10px;
+background: url(&quot;code-pirate.svg&quot;) no-repeat #58a 
+            bottom right; /* or 100% 100% */
+background-origin: content-box; 
+</code></pre></li>
+<li><p>使用 calc() 方法: 这种方法是始终以左上角为参照，利用 calc() 方法动态计算偏移值，注意+,-前后都必须有空格。 </p>
+
+<pre><code>background: url(&quot;code-pirate.svg&quot;) no-repeat;
+background-position: calc(100% - 20px) calc(100%-10px);
+</code></pre></li>
+</ul></li>
+</ul></li>
+<li><p>Inner Rounding</p>
+
+<ul>
+<li><p><em>The Problem</em> : 如何让容器边框实现内圆外方的效果 ？</p></li>
+<li><p><em>The Solution</em> : </p>
+
+<ul>
+<li><p>使用两次嵌套的方法可以实现这种效果。</p></li>
+<li><p>使用 box-shadow + outline 解决:</p>
+
+<p><img src="images/css_jiemi/inner_rounding.png" alt="inner rounding"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>background: tan;
+border-radius: .8em;
+padding: 1em;
+box-shadow: 0 0 0 .6em #655;
+outline: .6em solid #655;
+</code></pre></li>
+</ul></li>
+</ul></li>
+<li><p>Striped Backgrounds</p>
+
+<blockquote>
+<p>What is CSS linear gradients ?</p>
+
+<p>是一种CSS中实现颜色渐变的方法。</p>
+</blockquote>
+
+<ul>
+<li><p><em>The Problem</em> : 用 CSS 原生语言来解决条纹背景的问题。</p></li>
+<li><p><em>The Solution</em> : 用 linear-gradients 方法实现条纹背景</p>
+
+<ul>
+<li><p>产生横向条纹,如果需要铺满整个屏幕，将最后一句去掉即可。参数后的百分比表示，过渡点，如果两个值相同则没有过渡颜色。可以有不止两个过渡点，如果过渡点值为0，则和前一个过渡点的值保持一致</p>
+
+<p><img src="images/css_jiemi/create_strip.png" alt="create strip"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>background: linear-gradient(#fb3 50%, #58a 50%);
+background-size: 100% 30px;
+background-repeat: no-repeat;
+</code></pre></li>
+<li><p>产生竖直条纹</p>
+
+<p><img src="images/css_jiemi/vertical_strip.png" alt="vertical strip"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>background: linear-gradient(90deg, #fb3 50%, #58a 0);
+background-size: 30px 100%;
+</code></pre></li>
+<li><p>产生倾斜条纹</p>
+
+<p><img src="images/css_jiemi/diagonal_strip.png" alt="diagonal strip"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>/*一种比较死板的实现方式，不灵活*/
+background: linear-gradient(45deg,
+                #fb3 25%, #58a 0, #58a 50%,
+                #fb3 0, #fb3 75%, #58a 0);
+background-size: 30px 30px;
+
+/*一种比较好的实现方式, 灵活且不受度数变化造成画面破碎的影响*/
+background: repeating-linear-gradient(60deg,
+                #fb3, #fb3 15px, #58a 0, #58a 30px);
+</code></pre></li>
+</ul></li>
+</ul></li>
+<li><p>Complex Background Patterns</p>
+
+<ul>
+<li><p><em>The Problem</em> : Is it posible to create any kind of geometric pattern with CSS gradients ?</p></li>
+<li><p><em>The Solution</em> : </p>
+
+<ul>
+<li><p>Tablecloth Pattern</p>
+
+<p><img src="images/css_jiemi/tablecloth.png" alt="Tablecloth"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>background:         white;
+background-image:   linear-gradient(90deg, rgba(200,0,0,.5) 50%, transparent 0),
+                    linear-gradient(rgba(200,0,0,.5) 50%, transparent 0);
+background-size:    30px 30px;
+</code></pre></li>
+<li><p>Grid Pattern</p>
+
+<p><img src="images/css_jiemi/grid.png" alt="grid"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>background: #58a;
+background-image:
+    linear-gradient(white 1px, transparent 0),
+    linear-gradient(90deg, white 1px, transparent 0);
+background-size: 30px 30px;
+</code></pre></li>
+<li><p>Complex Grid Pattern</p>
+
+<blockquote>
+<p>background-size 用法</p>
+
+<p>background-size: length|percentage|cover|contain;</p>
+
+<p>其中 <code>length</code> 可以有两个参数，第一个参数为长度，第二个为宽度，如果只设置一个，则第二个为 auto。
+<code>percentage</code> 可以有两个参数，第一个参数为长度百分比，第二个为宽度百分比，如果只设置一个，则第二个为 auto。
+<code>cover</code> 表示背景完全覆盖, 即拉伸效果。<code>contain</code> 表示适应内容区域, 将背景扩大到适应长宽的最大尺寸(图片不会变形), 平铺效果。</p>
+</blockquote>
+
+<p><img src="images/css_jiemi/complex_grid.png" alt="complex grid"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>background: #58a;
+background-image:
+    linear-gradient(white 2px, transparent 0),
+    linear-gradient(90deg, white 2px, transparent 0),
+    linear-gradient(hsla(0,0%,100%,.3) 1px,transparent 0),
+    linear-gradient(90deg, hsla(0,0%,100%,.3) 1px, transparent 0);
+background-size:    75px 75px, 
+                    75px 75px,
+                    15px 15px, 
+                    15px 15px;
+</code></pre></li>
+<li><p>Polka Dot</p>
+
+<blockquote>
+<p>radial-gradient 用法</p>
+
+<p>background: radial-gradient(shape size postion, start-color, ..., last-color);</p>
+
+<p>其中<code>shape</code> 为形状，默认为椭圆。<code>size</code> 默认为 farthest-corner，<code>position</code> 默认为 center。</p>
+</blockquote>
+
+<p><img src="images/css_jiemi/polka_dot.png" alt="polka dot"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>background: #655;
+background-image:   radial-gradient(tan 30%, transparent 0),
+                    radial-gradient(tan 30%, transparent 0);
+background-size: 30px 30px;
+background-position: 0 0, 
+                    15px 15px;
+</code></pre></li>
+<li><p>Checkboards</p>
+
+<p><img src="images/css_jiemi/checkboards.png" alt="checkboards"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>background: #eee;
+background-image:   linear-gradient(45deg, #bbb 25%, transparent 0),
+                    linear-gradient(45deg, transparent 75%, #bbb 0),
+                    linear-gradient(45deg, #bbb 25%, transparent 0),
+                    linear-gradient(45deg, transparent 75%, #bbb 0);
+background-position: 0 0, 15px 15px,
+                    15px 15px, 30px 30px;
+background-size: 30px 30px;
+</code></pre></li>
+</ul></li>
+</ul></li>
+<li><p>Pseudo Random Backgrounds</p>
+
+<ul>
+<li><p><em>The Problem</em> : 如何利用原生CSS给背景创造足够的随机性？</p></li>
+<li><p><em>The Solution</em> : 利用所谓的 &quot;Cicada Priciple&quot;, 即利用素数来当偏移值，当素数足够大时，重复周期也会变得非常大，即所谓的伪随机。</p>
+
+<p><img src="images/css_jiemi/pseudo_random_strips.png" alt="pseudo random strips"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>background: hsl(20, 40%, 90%);
+background-image:   linear-gradient(90deg, #fb3 11px, transparent 0),
+                    linear-gradient(90deg, #ab4 23px, transparent 0),
+                    linear-gradient(90deg, #655 41px, transparent 0);
+background-size: 41px 100%, 61px 100%, 83px 100%;
+</code></pre></li>
+</ul></li>
+<li><p>Continuous Image Border</p>
+
+<ul>
+<li><p><em>The Problem</em> : 如何在用图片做边框的时候让边框连续，border-image 的方法实际上是把图片切片后再做边框的，并不连续。有一种笨办法是利用两个容器嵌套，大的当背景伪造出连续边框的效果。</p></li>
+<li><p><em>The Solution</em> : 利用 CSS3 新增语法实现在一个 element 中的连续图像边框。整体思路为把图像当背景，把图像覆盖到 border-box, 然后伪造一个白色背景覆盖 padding-box，即可得到。
+                由于 background-color 实现的背景只能在最后一层，所以只能有线性渐变的方法伪造白色背景。在 background 语句中最后的 0 / cover 代表将图片置于底层并采用拉伸效果。</p>
+
+<p><img src="images/css_jiemi/image_border.png" alt="image border"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>padding: 1em;
+border: 1em solid transparent;
+background: linear-gradient(white, white) padding-box,
+            url(stone-art.jpg) border-box 0 / cover;
+</code></pre></li>
+</ul></li>
+</ul>
+
+<h3>Shapes</h3>
+
+<ul>
+<li><p>Flexible Ellipses</p>
+
+<ul>
+<li><p><em>The Problem</em> : 如何优雅的实现椭圆形 ？</p></li>
+<li><p><em>The Solution</em> : </p>
+
+<p><img src="images/css_jiemi/ellipse.png" alt="ellipse"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>border-radius: 50% / 50%;
+</code></pre></li>
+</ul></li>
+<li><p>Parallelograms</p>
+
+<blockquote>
+<p>What is transform ?</p>
+
+<p>用法，transform: none|transform-functions;</p>
+
+<p>其中 transform-functions 包含倾斜、旋转、缩放等函数，具体可以查文档。</p>
+</blockquote>
+
+<ul>
+<li><p><em>The Problem</em> : 如何优雅的实现容器的平行四边形 ？</p></li>
+<li><p><em>The Solution</em> : 利用 transform 方法能让容器平行四边形，同时也将会拉扯其内容，比如文字，变得巨丑无比，所以需要在里面一层再次使用transform 拉扯回来。
+                同时，也可以利用伪元素来伪造一个平行四边形，从而不影响本体。</p>
+
+<pre><code>.button {
+    position: relative;
+    /* text color, paddings, etc. */
+}
+.button::before {
+    content: &#39;&#39;; /* To generate the box */
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    z-index: -1;
+    background: #58a;
+    transform: skew(45deg);
+}
+</code></pre></li>
+</ul></li>
+<li><p>Diamond Images</p>
+
+<blockquote>
+<p>What is clip-path ?</p>
+
+<p>一个从 SVG 借鉴过来的特性, 根据一连串定义的点来裁剪容器从而形成多边形。</p>
+</blockquote>
+
+<ul>
+<li><p><em>The Problem</em> : 如何优雅的实现菱形容器？</p>
+
+<p><img src="images/css_jiemi/diamond.png" alt="diamond"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p></li>
+<li><p><em>The Solution</em> :</p>
+
+<ul>
+<li><p>传统方法 :</p>
+
+<pre><code>.picture {
+    width: 400px;
+    transform: rotate(45deg);
+    overflow: hidden;
+}
+.picture &gt; img {
+    max-width: 100%;
+    transform: rotate(-45deg) scale(1.42);
+}
+</code></pre></li>
+<li><p>利用 clip-path。(Warning! 不是所有浏览器都支持这个属性)</p>
+
+<pre><code>/* 实际上，方法的4组参数定义了四个点，这四个点由父容器尺寸的百分比表示*/
+clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+</code></pre></li>
+</ul></li>
+</ul></li>
+<li><p>Cutout Corners</p>
+
+<ul>
+<li><p><em>The Problem</em> : 如何实现边角裁剪 ？</p></li>
+<li><p><em>The Solution</em> : </p>
+
+<ul>
+<li>任然是利用线性渐变。(我感觉所谓线性渐变实际上是生成了一个图，然后贴上去)</li>
+</ul>
+
+<p><img src="images/css_jiemi/cutout_corner.png" alt="cutout corner"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<p><img src="images/css_jiemi/curved_cutout_corner.png" alt="curved cutout corner"></p>
+
+<p><em>(图片来源: <a href="dabblet.com">dabblet.com</a>)</em></p>
+
+<pre><code>/* Cutout Corner */
+background: #58a;
+background: linear-gradient(135deg, transparent 15px, #58a 0) top left,
+            linear-gradient(-135deg, transparent 15px, #655 0) top right,
+            linear-gradient(-45deg, transparent 15px, #58a 0) bottom right,
+            linear-gradient(45deg, transparent 15px, #655 0) bottom left;
+background-size: 50% 50%;
+background-repeat: no-repeat;
+
+/* Curved Cutout Corner */
+background: #58a;
+background:
+radial-gradient(circle at top left, transparent 15px, #58a 0) top left,
+radial-gradient(circle at top right, transparent 15px, #58a 0) top right,
+radial-gradient(circle at bottom right, transparent 15px, #58a 0) bottom right,
+radial-gradient(circle at bottom left, transparent 15px, #58a 0) bottom left;
+background-size: 50% 50%;
+background-repeat: no-repeat;
+</code></pre></li>
+</ul></li>
+</ul>

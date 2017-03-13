@@ -218,6 +218,9 @@
 
                 #进入到master中~/hadoop-2.7.3/sbin/目录下
                 $ cd ~/hadoop-2.7.3/sbin/
+                
+                #格式化hdfs
+                $ hdfs namenode -format
 
                 #启动hdfs
                 $ ./start-dfs.sh
@@ -447,6 +450,64 @@
                 #运行完毕后，结果会保存到/user/hadoop/output下，
                 #可以进入 master:50070 -> utilities -> Browse the file system 下输入上述路径下载查看输出。
 
+5. Python 版本 WordCount 及运行方法
+    * mapper.py
+    
+            import sys
+
+            for line in sys.stdin :
+                line = line.strip() # 剥离末尾换行符
+                keys = line.split() # 以空格分离字符串为一组单词
+                for key in keys :
+                    value = 1
+                    print("{0}\t{1}".format(key, value))
+                
+    
+    * reducer.py
+
+            import sys
+
+            last_key = None
+            running_total = 0
+
+            for input_line in sys.stdin
+                input_line = input_line.strip()
+                this_key, value = input_line.split('\t', 1) # 这里的\t和mapper.py的输出分隔符保持一致
+                value = int(value)
+
+                if last_key == this_key :
+                    running_total += value
+                else :
+                    if last_key :
+                        print('{0}\t{1}'.format(last_key, running_total))
+                    running_total = value
+                    last_key = this_key
+            if last_key == this_key : 
+                    print('{0}\t{1}'.format(last_key, running_total))
+    
+    * 运行
+            
+            #打开集群，start-dfs.sh, start-yarn.sh
+            #首先清除 hdfs 中已存在的output文件夹，每次运行程序都要清理。
+            $ hdfs dfs -rm -r /user/hadoop/output
+
+            #在 hdfs 上创建输入文件夹
+            $ hdfs dfs -mkdir /user/hadoop/input
+            
+            #复制输入文件到 hdfs
+            $ hdfs dfs -put ~/hadoop-2.7.3/etc/hadoop/*.xml /user/hadoop/input
+
+            #运行程序
+            # 用cd命令切换到保存py文件的目录下
+            $ hadoop jar ~/hadoop-2.7.3/share/hadoop/tools/lib/hadoop-streaming-2.7.3.jar \
+                -input /user/hadoop/input \
+                -output /user/hadoop/output
+                -mapper mapper.py
+                -reducer reducer.py
+
+            #运行完毕后，结果会保存到/user/hadoop/output下，
+            #可以进入 master:50070 -> utilities -> Browse the file system 下输入上述路径下载查看输出。
+
 ### MapReduce不足 
 * Hadoop 解决的问题: ***解决了大数据的可靠存储和处理的问题***
         
@@ -479,3 +540,4 @@
 > * [利用maven创建hadoop项目](http://blog.fens.me/hadoop-maven-eclipse/) : 利用自动化工具maven搭建hadoop1.0.3项目（太旧）。
 > * [知乎回答 - hadoop零基础学习路线](https://www.zhihu.com/question/19795366) : 比较系统，但是有些资料比较老。
 > * [知乎回答 - 与Hadoop对比，如何看待Spark技术](https://www.zhihu.com/question/26568496/answer/41608400) : 最高票答案。
+> * [Cousera: Hadoop 平台和应用程序框架](https://www.coursera.org/learn/hadoop/home/welcome) : 加州大学圣地亚哥分校的公开课，讲的比较笼统。
