@@ -2,6 +2,5 @@
 *.out
 *.DS_Store
 *.swp
-Experiments/
-Documentations/
+Experiments/__pycache__
 *.TODO
