@@ -4,9 +4,9 @@
     构建算法，从有相无环图构建一种搜索策略
 
     References:
-        [1] - Simpson, Michael, Venkatesh Srinivasan, and Alex Thomo. 
-                "Clearing contamination in large networks." 
-                IEEE Transactions on Knowledge and Data Engineering 28.6 (2016): 1435-1448. 
+        [1] - Simpson, Michael, Venkatesh Srinivasan, and Alex Thomo.
+                "Clearing contamination in large networks."
+                IEEE Transactions on Knowledge and Data Engineering 28.6 (2016): 1435-1448.
     Authour:
         ExcitedX
 
@@ -32,7 +32,7 @@ def tarjan(node_s):
     tarjan(node_s, scc)
 
     Parameters:
-        node_s - this is a node at which an edge start 
+        node_s - this is a node at which an edge start
         scc    - set consists of sccs and its elements are tuples or lists consist of nodes' id.
 
     Returns:
@@ -53,7 +53,7 @@ def tarjan(node_s):
             Low[node_s] = DFN[node_e]
     if DFN[node_s] == Low[node_s]: # 如果当前节点只能回溯到自己
         _scc = list()
-        while 1: 
+        while 1:
             node = stack.pop()
             _scc.append(node)
             if node_s == node:

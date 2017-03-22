@@ -59,15 +59,15 @@ def fas(diG) :
             buckets.move(innodes)
             s2.append(node)
         #while len(buckets.sources) > 0 :       # the nodes out of the upper boundary will put into bins.sources, impossible in this case
-        #    print('fuck')                      
+        #    print('fuck')
         #    node = buckets.sources.pop()
-        #    s1.append(node) 
+        #    s1.append(node)
         if not buckets.empty() :
             node = buckets.maxPop()             # selecte a node from the maximum bin randomly
             innodes = diG.predecessors(node)
             buckets.move(innodes)
             s1.append(node)
-    s2.reverse()                                
+    s2.reverse()
     s1.extend(s2)
     et_generate = time.time()
     print(et_generate-et_init, 'generate the sequence time length.')
@@ -99,7 +99,7 @@ def export2csv(edges) :
         edges - tuples list.
 
     return:
-        url - a string represents the place that the csv file located. 
+        url - a string represents the place that the csv file located.
     '''
 
 if __name__ == '__main__' :

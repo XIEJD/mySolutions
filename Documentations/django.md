@@ -65,9 +65,7 @@
 * Authentication in Web Request (验证)
     
     > **What is Session ?**
-    >
-    > 所谓 Session, 其实是服务器用来记录当前访问用户信息的一种手段，它存储在服务器端，由服务器来管理。
-
+    > > 所谓 Session, 其实是服务器用来记录当前访问用户信息的一种手段，它存储在服务器端，由服务器来管理。 
     * **How to use session in Django ?**
         1. Enable session functionality : 在 settings.py 中 _MIDDLEWARE_ 中添加 'django.contrib.sessions.middleware.SessionMiddleware'
         2. Configure the session engine : 默认 Session 会存储在数据库中 (用`django.contrib.sessions.models.Session`)
