@@ -9,12 +9,13 @@ def timer(func) :
         start = time.time()
         func(*args, **kw)
         end = time.time()
-        print('运行时间：', func.__name__, end - start)
+        print('    运行时间：', func.__name__, end - start)
     return _wrapped_func
 
-@timer
-def func() :
-    pass
-
 if __name__ == '__main__' :
-    func()
+    from tqdm import tqdm
+    import pandas as pd
+    import numpy as np
+    df = pd.DataFrame(np.random.randint(0, 100, (100000, 600))) 
+    noprogressbar(df)
+    withprogressbar(df)
