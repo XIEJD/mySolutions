@@ -1,0 +1,183 @@
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script><link href="./solarized-light.css" rel="stylesheet"><h1>Iterative Development</h1>
+
+<blockquote>
+<ul>
+<li>author : XJD</li>
+<li>date : 2017-3-30</li>
+<li>email : xiejidong888@qq.com</li>
+</ul>
+</blockquote>
+
+<hr>
+
+<h2>Mixin</h2>
+
+<blockquote>
+<p><strong>Open Problems in Graph Searching</strong></p>
+
+<p>Reference : Bonato A, Yang B. Graph searching and related problems[M]//Handbook of Combinatorial Optimization. Springer New York, 2013: 1511-1558.</p>
+
+<ol>
+<li>The problem of determining the edge search number is NP-complete. 
+This problem remains NP-complete for graphs with a maximum vertex degree of 3. 
+However, whether the problem remains NP-complete for planar graphs is still unknown. 
+In fact, the complexity of determining the search number of planar graphs in all search games is unknown.</li>
+<li>The problems of designing efficient polynomial time approximation algorithms for computing the search number of all search games are wide open. 
+There are only few results for special classes of graphs. 
+For example, .n log n time 2-approximation algorithm for computing the pathwidth (or node search number) of outerplanar graphs.</li>
+<li>Finding good lower bounds for search numbers is a challenge for all search games mentioned in this chapter. There are few results for lower bounds.</li>
+<li>Whether there is a modified version of the directed treewidth that has an exact min-max theorem with the search number in the associated game remains an open problem
+<a href="#">Directed tree-width</a></li>
+<li>...</li>
+</ol>
+</blockquote>
+
+<ul>
+<li><p><strong>概念(What)</strong></p>
+
+<ol>
+<li><code>Botnets</code> : 俗称僵尸网络，指控制者采用某种手段，将互联网上大量主机感染bot程序(僵尸程序)，从而将受感染主机供控制者使用以达到某种目的(比如DDOS)
+
+<ul>
+<li>由 一个botmaster，一个或多个C&amp;C，多个bots 组成</li>
+<li>bot 具有感染性</li>
+</ul></li>
+</ol></li>
+<li><p><strong>为什么要这样设计模型(Why)</strong></p>
+
+<ol>
+<li><p>为什么要用这种模型(其和原模型的区别有什么意义？) ?</p></li>
+<li><p>限制条件有什么意义？</p></li>
+<li><p>优化目标有什么意义？</p></li>
+<li><p>graph searching 问题在此模型上有哪些性质 ?</p>
+
+<ul>
+<li>search-width 的上下届 ？</li>
+<li>monotonicity ?</li>
+</ul></li>
+</ol></li>
+<li><p><strong>为什么要设计这样的算法</strong></p>
+
+<ol>
+<li><p>问题有多难 ？算法设计出来有什么好处 ？</p></li>
+<li><p>算法设计时的难点在哪 ？</p></li>
+<li><p>算法评价指标 ？ 为什么用这种评价指标 ？</p></li>
+</ol></li>
+</ul>
+
+<h2>Modeling</h2>
+
+<ol>
+<li><p><strong>Definition 1</strong> : <strong><em>meta status</em></strong> of \(nodes\) in \( G \)</p>
+
+<ul>
+<li><code>contaminated</code></li>
+<li><code>cleaned</code></li>
+<li><code>guarded</code></li>
+</ul></li>
+<li><p><strong>Definition 2</strong> : <strong><em>meta status</em></strong> of \(edges\) in \(G\)</p>
+
+<ul>
+<li><code>contaminated</code></li>
+<li><code>limited</code></li>
+<li><code>cleaned</code></li>
+</ul></li>
+<li><p><strong>Definition 3</strong> : <strong><em>meta operations</em></strong> of \(searchers\) in \(G\)</p>
+
+<ul>
+<li><code>place</code></li>
+<li><code>clean</code></li>
+<li><code>wait</code></li>
+<li><code>interupt</code> : 这个操作是为在允许重复感染情况下准备的</li>
+</ul></li>
+<li><p><strong>Properties Definitions</strong></p>
+
+<ul>
+<li>monotonicity : 当所有 \(searchers\) 的 <code>clean</code> 操作得到的结果都为 <code>cleaned</code> 时，证明这个图是单调的</li>
+<li>cost : 所有 \(searchers\) 的 <code>wait</code> 操作的时长加起来，就是算法损耗。</li>
+<li>所有 \(searchers\) 的 <code>clean</code> 操作之和大于等于点的权重之和</li>
+</ul></li>
+</ol>
+
+<h4>带点权有向无环图</h4>
+
+<ol>
+<li><p><strong>Move Strategy</strong> : \(searchers\) 的移动规则</p>
+
+<ol>
+<li><p>normal strategy</p>
+
+<pre><code>STEP(G, S) :
+    for s in S :
+        if C is empty :
+            break
+        if s is clean_over :
+            next_node = C.pop()
+            if next_node has no incomming edges from contaminated nodes :
+                place(s, -&gt;next_node)
+                clean(s.w)
+            else :
+                continue
+</code></pre></li>
+<li><p>limited strategy</p>
+
+<pre><code>STEP(G, S, LE) :
+    for s in S :
+        if C is empty :
+            break
+        if s is clean_over :
+            if has_LimitedEdges(s) :
+                next_node = nearest_LimitedEdge(s)
+                place(s, -&gt;next_node)
+                clean(s.w)
+            else :
+                wait(s)
+</code></pre></li>
+<li><p>exclusive strategy</p>
+
+<pre><code>STEP(G, S) :
+    for s in S :
+        if C is empty :
+            break
+        if s is clean_over :
+            next_node = C.pop()
+            if next_node has no incomming edges from contaminated nodes &amp; there exist a path has no searcher to next_node :
+                place(s, -&gt;next_node)
+                clean(s.w)
+            else :
+                continue
+</code></pre></li>
+</ol></li>
+<li><p><strong>Model Properties</strong> : 模型性质</p>
+
+<ul>
+<li>search-width 的下界 或 上界 (搜索完图所需要的最小 \(searchers\) 的数量)</li>
+<li>NP-hard</li>
+<li>monotonicity (单调性)</li>
+</ul></li>
+</ol>
+
+<h4>带点权有向图</h4>
+
+<blockquote>
+<p><strong>How to handle cycles ?</strong></p>
+
+<ol>
+<li>breaking cycles. 在开始算法前，先找到图的FAS集，将之从图中移除，使有向图转化为有向无环图。</li>
+<li>guarding key nodes. 在开始算法前，先找到图中的关键点集，当有searchers驻守在点集上的点时，图中的环会被阻塞，从而可以用有向无环图的方法处理这个图。</li>
+</ol>
+</blockquote>
+
+<ol>
+<li><p><strong>Breaking cycles</strong></p>
+
+<ul>
+<li>思路和原论文思路一样，计算 FAS 后，从图中去环，应用DAG的算法。</li>
+</ul></li>
+<li><p><strong>Guarding key nodes</strong> : 将 searchers 分为两类：1、cleaners。2、guarders。</p>
+
+<ul>
+<li><p>Full guarded : 预先将所有 key nodes 驻守 guarders.</p></li>
+<li><p>Partial guarded : 运行时驻守，保证一定范围内的点不被重复感染。</p></li>
+</ul></li>
+</ol>

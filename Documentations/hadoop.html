@@ -1,6 +1,16 @@
 <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script><link href="./solarized-light.css" rel="stylesheet"><h2>Hadoop Startup</h2>
 
 <blockquote>
+<ul>
+<li>author   : XJD</li>
+<li>date     : 2017-03-12</li>
+<li>email    : xiejidong888@qq.com (personal)</li>
+</ul>
+</blockquote>
+
+<hr>
+
+<blockquote>
 <p><strong>What is Apache Hadoop ?</strong></p>
 
 <p>Hadoop 是一个为大数据在集群环境下并行处理所设计的软件框架，它提供了一套简单的编程模型给用户实现具体应用。Hadoop 的设计目的是将数据处理从单一的服务器扩展到成千上万的服务器，每个服务器提供其计算和存储资源。Hadoop 的设计在软件层面充分考虑了高可用性，使得其高可用性不再依赖于硬件设备，(将服务器失效看成一种正常状态)。</p>
@@ -243,6 +253,9 @@ $ tar -zxvf ~/hadoop-2.7.3.tar.gz
 
 <pre><code>#进入到master中~/hadoop-2.7.3/sbin/目录下
 $ cd ~/hadoop-2.7.3/sbin/
+
+#格式化hdfs
+$ hdfs namenode -format
 
 #启动hdfs
 $ ./start-dfs.sh

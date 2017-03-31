@@ -83,7 +83,7 @@ def mDFSO(G):
     This function is not recursive  which is different from real mDFS,
     this function is corresponds to Algorithm 2,
     actually, this function will never explore any edge twice,
-    so when using construct strategy generate an placement order,
+    so when using construct strategy generate a placement order,
     it is naturally an optimized construct strategy.
 
     Parameters:
@@ -208,11 +208,11 @@ def construct(edges, s) :
 #PROCEDURES
 #Graph
 G = nx.DiGraph()
-#G.add_nodes_from(['a','b','c','d','e','f'])
-#G.add_edges_from([('a','b'),('e','a'),('a','d'),('b','c'),('c','f'),('b','e'),('d','e'),('e','f')])
+G.add_nodes_from(['a','b','c','d','e','f'])
+G.add_edges_from([('a','b'),('e','a'),('a','d'),('b','c'),('c','f'),('b','e'),('d','e'),('e','f')])
 
-data = pd.read_table('/Users/xjd/Desktop/experiments/datasets/epinions.txt')
-G = nx.from_pandas_dataframe(data, 'Source', 'Target',create_using=nx.DiGraph())
+#data = pd.read_table('/Users/xjd/Desktop/experiments/datasets/epinions.txt')
+#G = nx.from_pandas_dataframe(data, 'Source', 'Target',create_using=nx.DiGraph())
 msG = max(nx.weakly_connected_component_subgraphs(G), key=len)  #从G中找出最大弱连通图
 #print('最大弱连通图边数',len(msG.edges()))
 #scc_gen = nx.strongly_connected_components(G)
@@ -247,8 +247,11 @@ msG = max(nx.weakly_connected_component_subgraphs(G), key=len)  #从G中找出�
 #nx.draw_networkx(G, pos=nx.shell_layout(G))
 #plt.show()
 
-fas = fas(msG)
+order, fas = imDFSO(msG)
+print('edges search order: ',order)
 print('fas length : ',len(fas))
+if len(fas) <= 10 :
+    print('fas :', fas)
 msG.remove_edges_from(fas)
 print('number of the rest edges',len(msG.edges()))
 print('The final graph is DAG ? ',nx.is_directed_acyclic_graph(msG))

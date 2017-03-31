@@ -96,8 +96,8 @@ sub {
 img {
   max-width: 714px;
   border-radius: 10px;
-  border: 1px solid 666666;
-  box-shadow: 0 0 5px #666666;
+  box-shadow: 0 0 20px #666666;
+
 }
 svg:not(:root) {
   overflow: hidden;
@@ -309,4 +309,10 @@ h6 {
   -moz-border-radius: 0.2em;
   border-radius: 0.2em;
   background-color: #859900;
+}
+
+img {
+ clear: both;
+ display: block;
+ margin:auto;
 }

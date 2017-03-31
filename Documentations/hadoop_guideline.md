@@ -1,5 +1,11 @@
 ## Hadoop Startup
 
+> * author   : XJD
+> * date     : 2017-03-12
+> * email    : xiejidong888@qq.com (personal)
+
+---
+
 > **What is Apache Hadoop ?**
 >
 > Hadoop 是一个为大数据在集群环境下并行处理所设计的软件框架，它提供了一套简单的编程模型给用户实现具体应用。Hadoop 的设计目的是将数据处理从单一的服务器扩展到成千上万的服务器，每个服务器提供其计算和存储资源。Hadoop 的设计在软件层面充分考虑了高可用性，使得其高可用性不再依赖于硬件设备，(将服务器失效看成一种正常状态)。
