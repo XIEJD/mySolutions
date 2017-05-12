@@ -9,7 +9,7 @@ wget -P ~/ https://raw.githubusercontent.com/XIEJD/mySolutions/master/Environmen
 wget -P ~/ https://raw.githubusercontent.com/XIEJD/mySolutions/master/Environment_Deployment/.bash_profile
 
 # extract bundles name in .vimrc
-grep '^Plugin*' ~/.vimrc | grep -o \'.*\' | grep -o [a-zA-Z0-9\.\/\-]* > ~/.pathname
+grep '^Plugin*' ~/.vimrc | grep -o \'.*\' | grep -o '[a-zA-Z0-9\.\/\-]*' > ~/.pathname
 
 # download bundles automaticly using git.
 for pathname in $(cat ~/.pathname)
