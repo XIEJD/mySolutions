@@ -60,7 +60,9 @@ else
     exit
 fi
 
-# environment
+# environment, backup first
+cat ~/.bashrc > ~/.bashrc.backup
+cat ~/.bash_profile > ~/.bash_profile.backup
 echo 'Setting environments...'
 echo alias python=~/Applications/${PYTHON}/bin/python3 >> ~/.bashrc
 echo alias pip=~/Applications/${PYTHON}/bin/pip3 >> ~/.bashrc
