@@ -34,36 +34,36 @@ def reconstruct(pre, mid):
         return Node(value, left, right) 
 
 
-def pre_traversal(node):
+def pre_traverse(node):
     if node is None:
         return 
     print(node.value)
-    pre_traversal(node.left_child)
-    pre_traversal(node.right_child)
+    pre_traverse(node.left_child)
+    pre_traverse(node.right_child)
 
 
-def mid_traversal(node):
+def mid_traverse(node):
     if node is None:
         return 
-    mid_traversal(node.left_child)
+    mid_traverse(node.left_child)
     print(node.value)
-    mid_traversal(node.right_child)
+    mid_traverse(node.right_child)
 
 
-def post_traversal(node):
+def post_traverse(node):
     if node is None:
         return 
-    post_traversal(node.left_child)
-    post_traversal(node.right_child)
+    post_traverse(node.left_child)
+    post_traverse(node.right_child)
     print(node.value)
 
 if __name__ == '__main__':
     root = reconstruct(PRE, MID)
     print('前序遍历')
-    pre_traversal(root)
+    pre_traverse(root)
     print('中序遍历')
-    mid_traversal(root)
+    mid_traverse(root)
     print('后序遍历')
-    post_traversal(root)
+    post_traverse(root)
 
 
