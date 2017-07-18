@@ -10,10 +10,12 @@ echo 'Powered By XJD To Zhuangbi.'
 echo 'Only for macOS and Ubuntu.'
 
 filename=$1
-instdir=~/.xtools/bin
+instdir=$2
+
+# Usage
+touch ${instdir}/$filename
 
 # set bash
-mkdir -p ~/.tools/bin
 echo '#! /bin/bash' > ${instdir}/$filename
 
 # set title
